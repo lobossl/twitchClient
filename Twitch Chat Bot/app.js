@@ -3,7 +3,6 @@
 
     TODO:
     - Add Reply (Add inputChat.value @nickName text...?)
-    - Auto scroll bottom stop when i scroll
 */
 
 let addChat = document.getElementById("addChat")
@@ -24,14 +23,27 @@ let countMessages = 0
 let limitMessages = 10000 //how many messages will be shown before reset
 
 connect.addEventListener("click",() => {
+    systemMessages.innerText = "Reconnecting.."
+    connectWebSocket()
+})
+
+function connectWebSocket() {
     socket = new WebSocket(settings.server)
     
     socket.addEventListener("close",() => {
-        systemMessages.innerText = "Connection closed #3"
+        systemMessages.innerText = "Connection closed #3, reconnecting in 5 seconds"
+        setTimeout(() => {
+            countMessages = 0
+            connectWebSocket()
+        },5000)
     })
     
     socket.addEventListener("error",() => {
-        systemMessages.innerText = "Connection error #4"
+        systemMessages.innerText = "Connection error #4, reconnecting in 5 seconds"
+        setTimeout(() => {
+            countMessages = 0
+            connectWebSocket()
+        },5000)
     })
     
     socket.addEventListener("open",() => {
@@ -87,7 +99,7 @@ connect.addEventListener("click",() => {
             }
         }
     })
-})
+}
 
 addChat.addEventListener("click",() => {
     if(pauseScroll == false)
