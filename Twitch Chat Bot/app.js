@@ -3,7 +3,6 @@
 
     TODO:
     - Add Reply (Add inputChat.value @nickName text...?)
-    - Auto scroll bottom stop when i scroll
 */
 
 let addChat = document.getElementById("addChat")
