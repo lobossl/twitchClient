@@ -3,6 +3,7 @@
 
     TODO:
     - Add Reply (Add inputChat.value @nickName text...?)
+    - Auto scroll bottom stop when i scroll
 */
 
 let addChat = document.getElementById("addChat")
@@ -60,7 +61,7 @@ connect.addEventListener("click",() => {
             {
                 if(countMessages >= limitMessages)
                 {
-                    systemMessages = "Chat was reset by limit"
+                    systemMessages.innerText = "Chat was reset due limit"
                     addChat.innerText = ""
                     countMessages = 0
                 }
@@ -166,11 +167,7 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
 
     createDivMsgId.innerText = countMessages + "/" + limitMessages
 
-    if(pauseScroll)
-    {
-        //
-    }
-    else
+    if(pauseScroll == false)
     {
         addChat.scrollTop = addChat.scrollHeight
     }
