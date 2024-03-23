@@ -11,9 +11,11 @@ let inputChannel = document.getElementById("inputChannel")
 let inputOauth = document.getElementById("inputOauth")
 let connect = document.getElementById("connect")
 let systemMessages = document.getElementById("systemMessages")
+let btnPause = document.getElementById("btnPause")
 
 let settings = {
-    server: "wss://irc-ws.chat.twitch.tv:443"
+    server: "wss://irc-ws.chat.twitch.tv:443",
+    pause: false
 }
 
 let socket
@@ -41,9 +43,17 @@ function connectWebSocket() {
     })
     
     socket.addEventListener("open",() => {
-        socket.send("PASS " + inputOauth.value + "\r\n")
-        socket.send("NICK iAmMonkey\r\n")
-        socket.send("JOIN #" + inputChannel.value + "\r\n")
+        if(inputOauth.length > 0)
+        {
+            socket.send("PASS " + inputOauth.value + "\r\n")
+            socket.send("NICK Anonymous3331\r\n")
+            socket.send("JOIN #" + inputChannel.value + "\r\n")
+        }
+        else
+        {
+            socket.send("NICK justinfan3331\r\n")
+            socket.send("JOIN #" + inputChannel.value + "\r\n")
+        }
 
         systemMessages.innerText = "Connected to " + inputChannel.value
     })
@@ -75,7 +85,7 @@ function connectWebSocket() {
             }
             else
             {
-                return null
+                console.log(data)
             }
         }
     })
@@ -93,6 +103,17 @@ document.addEventListener("click",(e) => {
     else
     {
         return null
+    }
+})
+
+btnPause.addEventListener("click",() => {
+    if(settings.pause)
+    {
+        settings.pause = false
+    }
+    else
+    {
+        settings.pause = true
     }
 })
 
@@ -176,5 +197,8 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
 
     addChat.append(createDiv)
 
-    addChat.scrollTop = addChat.scrollHeight
+    if(settings.pause == false)
+    {
+        addChat.scrollTop = addChat.scrollHeight
+    }
 }
