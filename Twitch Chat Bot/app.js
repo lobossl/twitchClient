@@ -87,13 +87,21 @@ document.addEventListener("click",(e) => {
     {
         inputChat.innerText = "@" + e.target.id
     }
+    else if(e.target.className === "ban")
+    {
+        inputChat.innerText = "/ban " + e.target.id + " " + "Banned"
+    }
+    else
+    {
+        return null
+    }
 })
 
 btnChat.addEventListener("click",() => {
     try
     {
         socket.send("PRIVMSG #" + inputChannel.value + " :" + inputChat.innerText + "\r\n")
-        
+
         inputChat.innerText = ""
     }
     catch(err)
@@ -107,6 +115,7 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
     let createDiv = document.createElement("div")
     let createDivIcons = document.createElement("div")
     let createDivReply = document.createElement("img")
+    let createDivBan = document.createElement("img")
     let createDivNick = document.createElement("span")
     let createDivMsg = document.createElement("span")
 
@@ -142,14 +151,24 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
     createDivReply.className = "reply"
     createDivReply.style.margin = "2px"
     createDivReply.style.padding = "2px"
-    createDivReply.style.border = "1px solid #CCCCCC"
+    createDivReply.style.border = "1px solid #556677"
     createDivReply.style.borderRadius = "3px"
     createDivReply.style.cursor = "pointer"
+
+    createDivBan.src = "img/banned.png"
+    createDivBan.id = currentNick
+    createDivBan.className = "ban"
+    createDivBan.style.margin = "2px"
+    createDivBan.style.padding = "2px"
+    createDivBan.style.border = "1px solid #FF0000"
+    createDivBan.style.borderRadius = "3px"
+    createDivBan.style.cursor = "pointer"
 
     createDivIcons.style.textAlign = "right"
     createDivIcons.style.borderBottom = "1px solid #CCCCCC"
 
     createDivIcons.append(createDivReply)
+    createDivIcons.append(createDivBan)
     createDiv.append(createDivIcons)
     createDiv.append(createDivNick)
     createDiv.append(createDivMsg)
