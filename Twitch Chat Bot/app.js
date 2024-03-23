@@ -42,11 +42,8 @@ function connectWebSocket() {
     })
     
     socket.addEventListener("open",() => {
-        if(inputOauth.value.length > 0)
-        {
-            socket.send("PASS " + inputOauth.value + "\r\n")
-        }
-        socket.send("NICK justinfan12345\r\n")
+        socket.send("PASS " + inputOauth.value + "\r\n")
+        socket.send("NICK iAmMonkey\r\n")
         socket.send("JOIN #" + inputChannel.value + "\r\n")
 
         systemMessages.innerText = "Connected to " + inputChannel.value
@@ -88,27 +85,20 @@ function connectWebSocket() {
 document.addEventListener("click",(e) => {
     if(e.target.className === "reply")
     {
-        inputChat.innerText = "@" + e.target.id + " "
+        inputChat.innerText = "@" + e.target.id
     }
 })
 
 btnChat.addEventListener("click",() => {
     try
     {
-        if(socket.readyState === WebSocket.OPEN)
-        {
-            socket.send("PRIVMSG #" + inputChannel.value + " " + inputChat.innerText + "\r\n")
-    
-            inputChat.innerText = ""
-        }
-        else
-        {
-            systemMessages.innerText = "You are not connected, failed to send message! #1"
-        }
+        socket.send("PRIVMSG #" + inputChannel.value + " :" + inputChat.innerText + "\r\n")
+        
+        inputChat.innerText = ""
     }
     catch(err)
     {
-        systemMessages.innerText = "You are not connected, failed to send message! #2"
+        systemMessages.innerText = "Error, failed to send message"
     }
 })
 
