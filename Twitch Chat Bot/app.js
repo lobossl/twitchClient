@@ -1,8 +1,7 @@
 /*
     Twitch Chat Bot Med WebSocket
 
-    TODO:
-    - Add Reply (Add inputChat.value @nickName text...?)
+    https://github.com/lobossl
 */
 
 let addChat = document.getElementById("addChat")
@@ -101,6 +100,8 @@ btnChat.addEventListener("click",() => {
     try
     {
         socket.send("PRIVMSG #" + inputChannel.value + " :" + inputChat.innerText + "\r\n")
+
+        CREATEDIVS("PRIVMSG","YOU",":" + inputChat.innerText,inputChannel.value)
 
         inputChat.innerText = ""
     }
