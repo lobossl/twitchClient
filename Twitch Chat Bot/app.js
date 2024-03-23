@@ -17,10 +17,7 @@ let settings = {
     server: "wss://irc-ws.chat.twitch.tv:443"
 }
 
-let pauseScroll = false
 let socket
-let countMessages = 0
-let limitMessages = 10000 //how many messages will be shown before reset
 
 connect.addEventListener("click",() => {
     systemMessages.innerText = "Reconnecting.."
@@ -33,7 +30,6 @@ function connectWebSocket() {
     socket.addEventListener("close",() => {
         systemMessages.innerText = "Connection closed #3, reconnecting in 5 seconds"
         setTimeout(() => {
-            countMessages = 0
             connectWebSocket()
         },5000)
     })
@@ -41,7 +37,6 @@ function connectWebSocket() {
     socket.addEventListener("error",() => {
         systemMessages.innerText = "Connection error #4, reconnecting in 5 seconds"
         setTimeout(() => {
-            countMessages = 0
             connectWebSocket()
         },5000)
     })
@@ -69,15 +64,6 @@ function connectWebSocket() {
         {
             if(data[1] === "PRIVMSG")
             {
-                if(countMessages >= limitMessages)
-                {
-                    systemMessages.innerText = "Chat was reset due limit"
-                    addChat.innerText = ""
-                    countMessages = 0
-                }
-
-                countMessages++
-
                 let emtyStr = ""
     
                 let getNick = data[0].split("!",1)[0].split(":",2)[1]
@@ -99,16 +85,10 @@ function connectWebSocket() {
     })
 }
 
-addChat.addEventListener("click",() => {
-    if(pauseScroll === false)
+document.addEventListener("click",(e) => {
+    if(e.target.className === "reply")
     {
-        pauseScroll = true
-        systemMessages.innerText = "Chat paused"
-    }
-    else
-    {
-        pauseScroll = false
-        systemMessages.innerText = "Chat resumed"
+        inputChat.innerText = "@" + e.target.id + " "
     }
 })
 
@@ -135,14 +115,13 @@ btnChat.addEventListener("click",() => {
 function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
 {
     let createDiv = document.createElement("div")
-    let createDivChannel= document.createElement("div")
+    let createDivIcons = document.createElement("div")
+    let createDivReply = document.createElement("img")
     let createDivNick = document.createElement("span")
     let createDivMsg = document.createElement("span")
-    let createDivMsgId = document.createElement("div")
 
     if(info === "PRIVMSG")
     {
-        createDivChannel.innerText = currentChannel
         createDivNick.innerText = currentNick
         createDivMsg.innerText = currentMessage
     }
@@ -168,17 +147,24 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
     createDivMsg.style.fontSize = "1em"
     createDivMsg.style.margin = "5px"
 
-    createDiv.append(createDivMsgId)
-    createDiv.append(createDivChannel)
+    createDivReply.src = "img/reply.png"
+    createDivReply.id = currentNick
+    createDivReply.className = "reply"
+    createDivReply.style.margin = "2px"
+    createDivReply.style.padding = "2px"
+    createDivReply.style.border = "1px solid #CCCCCC"
+    createDivReply.style.borderRadius = "3px"
+    createDivReply.style.cursor = "pointer"
+
+    createDivIcons.style.textAlign = "right"
+    createDivIcons.style.borderBottom = "1px solid #CCCCCC"
+
+    createDivIcons.append(createDivReply)
+    createDiv.append(createDivIcons)
     createDiv.append(createDivNick)
     createDiv.append(createDivMsg)
 
     addChat.append(createDiv)
 
-    createDivMsgId.innerText = countMessages + "/" + limitMessages
-
-    if(pauseScroll === false)
-    {
-        addChat.scrollTop = addChat.scrollHeight
-    }
+    addChat.scrollTop = addChat.scrollHeight
 }
