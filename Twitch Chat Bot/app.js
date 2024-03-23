@@ -52,6 +52,7 @@ function connectWebSocket() {
             socket.send("PASS " + inputOauth.value + "\r\n")
         }
         socket.send("NICK justinfan12345\r\n")
+        socket.send("JOIN #" + inputChannel.value + "\r\n")
 
         systemMessages.innerText = "Connected to " + inputChannel.value
     })
@@ -59,17 +60,14 @@ function connectWebSocket() {
     socket.addEventListener("message", (e) => {
         let data = e.data.split(" ")
     
-        if(data[0] == "PING")
+        if(data[0] === "PING")
         {
+            console.log("Ping Pong!")
             socket.send("PONG " +  data[0] + "\r\n")
         }
         else
         {
-            if(data[1] == "001")
-            {
-                socket.send("JOIN #" + inputChannel.value + "\r\n")
-            }
-            else if(data[1] == "PRIVMSG")
+            if(data[1] === "PRIVMSG")
             {
                 if(countMessages >= limitMessages)
                 {
@@ -102,7 +100,7 @@ function connectWebSocket() {
 }
 
 addChat.addEventListener("click",() => {
-    if(pauseScroll == false)
+    if(pauseScroll === false)
     {
         pauseScroll = true
         systemMessages.innerText = "Chat paused"
@@ -142,7 +140,7 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
     let createDivMsg = document.createElement("span")
     let createDivMsgId = document.createElement("div")
 
-    if(info == "PRIVMSG")
+    if(info === "PRIVMSG")
     {
         createDivChannel.innerText = currentChannel
         createDivNick.innerText = currentNick
@@ -179,7 +177,7 @@ function CREATEDIVS(info,currentNick,currentMessage,currentChannel)
 
     createDivMsgId.innerText = countMessages + "/" + limitMessages
 
-    if(pauseScroll == false)
+    if(pauseScroll === false)
     {
         addChat.scrollTop = addChat.scrollHeight
     }
